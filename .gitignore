@@ -1,0 +1,12 @@
+key.mjs
+.DS_Store
+.idea
+.cache
+.vscode/
+node_modules
+dist/
+npm-debug.log
+yarn-error.log
+*.log
+*.iml
+tmp
