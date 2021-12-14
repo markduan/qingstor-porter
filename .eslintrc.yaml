@@ -1,19 +1,40 @@
+parser: '@typescript-eslint/parser'
 extends:
   - google
   - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
 plugins:
+  - '@typescript-eslint'
   - unused-imports
 env:
-  browser: true
-  es2021: true
+  node: true
 globals:
   process: true
 parserOptions:
-  ecmaFeatures:
-    jsx: true
   ecmaVersion: 12
   sourceType: module
 rules:
+  '@typescript-eslint/camelcase': 'off'
+  '@typescript-eslint/explicit-function-return-type':
+    - error
+    - allowExpressions: true
+      allowTypedFunctionExpressions: true
+      allowHigherOrderFunctions: true
+      allowDirectConstAssertionInArrowFunctions: true
+      allowConciseArrowFunctionExpressionsStartingWithVoid: false
+  '@typescript-eslint/explicit-module-boundary-types':
+    - warn
+    - allowArgumentsExplicitlyTypedAsAny: true
+      allowDirectConstAssertionInArrowFunctions: true
+      allowedNames: []
+      allowHigherOrderFunctions: true
+      allowTypedFunctionExpressions: true
+  '@typescript-eslint/no-explicit-any': 'warn'
+  '@typescript-eslint/no-invalid-this':
+    - error
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - varsIgnorePattern: _
   camelcase: 'off'
   arrow-parens:
     - error

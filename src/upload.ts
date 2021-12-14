@@ -61,7 +61,7 @@ function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verb
     (err) => {
       if (err) {
         console.error('err:', err);
-        reject(err)
+        reject(err);
       }
 
       resolve();

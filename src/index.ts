@@ -1,21 +1,19 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import handleCP from './handle-copy.js';
 import { Options } from './type';
 
-function getConfig(configPath: string): Partial<{ ak: string; sk: string; }> {
-  if (!configPath) {
-    return {};
-  }
+// function getConfig(configPath: string): Partial<{ ak: string; sk: string; }> {
+//   if (!configPath) {
+//     return {};
+//   }
 
-  const content = fs.readFileSync(path.join(process.cwd(), configPath), { encoding: 'utf-8' });
-  return JSON.parse(content);
-}
+//   const content = fs.readFileSync(path.join(process.cwd(), configPath), { encoding: 'utf-8' });
+//   return JSON.parse(content);
+// }
 
 const argv = yargs(hideBin(process.argv))
   .options({
@@ -58,14 +56,14 @@ const options: Options = {
 };
 
 if (!options.ak || !options.sk) {
-  console.error('ak and sk required')
+  console.error('ak and sk required');
   process.exit(1);
 }
 
 if (argv._[0] === 'cp') {
   if (argv._.length < 3) {
-    console.error('missing source or destination')
-    process.exit(1)
+    console.error('missing source or destination');
+    process.exit(1);
   }
 
   const sources = argv._.slice(1, -1);
@@ -73,7 +71,7 @@ if (argv._[0] === 'cp') {
 
   Promise.all(
     sources.map((source) => {
-      return handleCP(String(source), String(destination), options)
+      return handleCP(String(source), String(destination), options);
     }),
   );
 }
