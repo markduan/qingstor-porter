@@ -12,7 +12,7 @@ export default function handleCP({ source, destination, ak, sk, verbose }) {
     absPath = path.join(process.cwd(), absPath);
   }
 
-  const [zone, bucket, prefix = ''] =  destination.split(':')
+  const [zone, bucket, prefix = ''] = destination.split(':');
   if (!zone || !bucket) {
     process.exit(1);
   }

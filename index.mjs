@@ -1,20 +1,22 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 import handleCP from './handle-copy.mjs';
-import { ak, sk} from './key.mjs';
+import { ak, sk } from './key.mjs';
 
 yargs(hideBin(process.argv))
   .command(
     'cp <source> <destination>',
     'copy file or folder to QingStor',
     {
-      source: { describe: 'file or folder path', },
+      source: { describe: 'file or folder path' },
       destination: { describe: 'e.g. pek3b:bucket:[prefix]' },
     },
-    handleCP,
+    ({ source, destination, ak, sk, verbose }) => {
+      handleCP({ source, destination, ak, sk, verbose });
+    },
   )
   .option('ak', {
     type: 'string',
@@ -29,7 +31,12 @@ yargs(hideBin(process.argv))
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
-    description: 'Run with verbose logging'
+    description: 'Run with verbose logging',
+  })
+  .option('force', {
+    alias: 'f',
+    type: 'boolean',
+    description: 'Run cp force',
   })
   .help('h')
   .parse();
