@@ -1,12 +1,24 @@
-import path from 'path';
 import undici from 'undici';
 import fs from 'fs';
 import { pipeline } from 'stream';
-import { createHmac } from 'crypto';
 import { lookup } from 'mime-types';
 import { createGzip } from 'zlib';
 
-function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verbose }) {
+import getAuthorization from './auth';
+
+type RunParams = {
+  filePath: string;
+  uploadPath: string;
+  ak: string;
+  sk: string;
+  bucket: string;
+  zone: string;
+  resolve: () => void;
+  reject: (err: Error) => void;
+  verbose: boolean;
+}
+
+function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verbose }: RunParams): void {
   const date = new Date().toUTCString();
   const contentType = lookup(filePath) || 'application/oct-stream';
 
@@ -57,26 +69,20 @@ function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verb
   );
 }
 
-function uploadOne({ filePath, uploadPath, ak, sk, bucket, zone, verbose }) {
+type uploadOneParams = {
+  filePath: string;
+  uploadPath: string;
+  ak: string;
+  sk: string;
+  bucket: string;
+  zone: string;
+  verbose: boolean;
+}
+
+function uploadOne({ filePath, uploadPath, ak, sk, bucket, zone, verbose }: uploadOneParams): Promise<void> {
   return new Promise((resolve, reject) => {
     run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verbose });
   });
-}
-
-function getAuthorization({ uploadPath, date, contentType, ak, sk, bucket }) {
-  const stringToSign = [
-    'PUT',
-    '',
-    contentType,
-    date,
-    // ofapkg-demo
-    // gd2
-    encodeURI(path.join(`/${bucket}`, uploadPath)),
-  ].join('\n');
-  const hmac = createHmac('sha256', sk);
-  const signature = hmac.update(stringToSign).digest('base64');
-
-  return `QS ${ak}:${signature}`;
 }
 
 export default uploadOne;

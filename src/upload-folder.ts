@@ -2,10 +2,19 @@ import glob from 'glob';
 import path from 'path';
 import fs from 'fs';
 
-import uploadOne from './upload.mjs';
+import uploadOne from './upload';
 
-export default async function uploadFolder({ folder, uploadPath, ak, sk, bucket, zone, verbose }) {
+type Params = {
+  folder: string;
+  uploadPath: string;
+  ak: string;
+  sk: string;
+  bucket: string;
+  zone: string;
+  verbose: boolean;
+}
 
+export default async function uploadFolder({ folder, uploadPath, ak, sk, bucket, zone, verbose }: Params) {
   const files = glob.sync(path.join(folder, '**/*'))
     .filter((filePath) => fs.statSync(filePath).isFile())
     .map((filePath) => {

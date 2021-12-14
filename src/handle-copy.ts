@@ -1,10 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 
-import uploadFolder from './upload-folder.mjs';
-import uploadOne from './upload.mjs';
+import uploadFolder from './upload-folder.js';
+import uploadOne from './upload';
+import { Options } from './type';
 
-export default function handleCP({ source, destination, ak, sk, verbose }) {
+export default function handleCP(source: string, destination: string, { ak, sk, verbose }: Options): Promise<void> {
   // remove the last slash
   const _trimSource = source.replace(/\/$/, '');
   let absPath = _trimSource;
@@ -14,7 +15,7 @@ export default function handleCP({ source, destination, ak, sk, verbose }) {
 
   const [zone, bucket, prefix = ''] = destination.split(':');
   if (!zone || !bucket) {
-    process.exit(1);
+    throw new Error('zone and bucket required');
   }
 
   const stat = fs.statSync(absPath);
