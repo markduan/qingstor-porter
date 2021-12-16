@@ -46,15 +46,11 @@ rules:
     - 1
     - code: 110
       ignoreComments: true
-      ignorePattern: >-
-        ^(\s*[a-zA-Z_]+:
-        '[^']+'[,;]*)|(.*interpolate.*)|(.*require.*)|(.*_\.template.*)|(<svg
-        .*)|(<rect .*)|(<polygon .*)$
       ignoreRegExpLiterals: true
       ignoreTrailingComments: true
       ignoreUrls: true
       tabWidth: 2
-  no-console: warn
+  no-console: error
   no-invalid-this: 'off'
   no-mixed-operators: error
   no-multiple-empty-lines:
