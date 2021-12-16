@@ -6,15 +6,6 @@ import { hideBin } from 'yargs/helpers';
 import handleCP from './handle-copy.js';
 import { Options } from './type';
 
-// function getConfig(configPath: string): Partial<{ ak: string; sk: string; }> {
-//   if (!configPath) {
-//     return {};
-//   }
-
-//   const content = fs.readFileSync(path.join(process.cwd(), configPath), { encoding: 'utf-8' });
-//   return JSON.parse(content);
-// }
-
 const argv = yargs(hideBin(process.argv))
   .options({
     ak: { type: 'string', describe: 'access key' },
@@ -31,6 +22,7 @@ const argv = yargs(hideBin(process.argv))
       description: 'Run cp force',
       global: true,
     },
+    // todo implement this
     config: {
       alias: 'c',
       type: 'string',
@@ -56,14 +48,12 @@ const options: Options = {
 };
 
 if (!options.ak || !options.sk) {
-  console.error('ak and sk required');
-  process.exit(1);
+  throw new Error('ak and sk required');
 }
 
 if (argv._[0] === 'cp') {
   if (argv._.length < 3) {
-    console.error('missing source or destination');
-    process.exit(1);
+    throw new Error('missing source or destination');
   }
 
   const sources = argv._.slice(1, -1);
