@@ -5,6 +5,7 @@ import { lookup } from 'mime-types';
 import { createGzip } from 'zlib';
 
 import getAuthorization from './auth';
+import logger from './logger';
 
 type RunParams = {
   filePath: string;
@@ -15,20 +16,17 @@ type RunParams = {
   zone: string;
   resolve: () => void;
   reject: (err: Error) => void;
-  verbose: boolean;
 }
 
-function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verbose }: RunParams): void {
+function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject }: RunParams): void {
   const date = new Date().toUTCString();
   const contentType = lookup(filePath) || 'application/oct-stream';
 
   const auth = getAuthorization({ uploadPath, date, contentType, ak, sk, bucket });
   const pwd = process.cwd();
   const hostname = `${bucket}.${zone}.qingstor.com`;
-  if (verbose) {
-    console.log(`uploading ${filePath.slice(pwd.length)}`);
-    console.log(`to ${hostname}${uploadPath}`);
-  }
+  logger.log(`uploading ${filePath.slice(pwd.length)}`);
+  logger.log(`to ${hostname}${uploadPath}`);
 
   pipeline(
     fs.createReadStream(filePath),
@@ -52,7 +50,7 @@ function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verb
       },
       ({ statusCode, body }) => {
         if (statusCode >= 400) {
-          console.error('failed to upload file', statusCode);
+          logger.error('failed to upload file', statusCode);
         }
 
         return body;
@@ -60,7 +58,7 @@ function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verb
     ),
     (err) => {
       if (err) {
-        console.error('err:', err);
+        logger.error('err:', err);
         reject(err);
       }
 
@@ -76,12 +74,11 @@ type uploadOneParams = {
   sk: string;
   bucket: string;
   zone: string;
-  verbose: boolean;
 }
 
-function uploadOne({ filePath, uploadPath, ak, sk, bucket, zone, verbose }: uploadOneParams): Promise<void> {
+function uploadOne({ filePath, uploadPath, ak, sk, bucket, zone }: uploadOneParams): Promise<void> {
   return new Promise((resolve, reject) => {
-    run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject, verbose });
+    run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject });
   });
 }
 

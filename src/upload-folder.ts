@@ -11,10 +11,9 @@ type Params = {
   sk: string;
   bucket: string;
   zone: string;
-  verbose: boolean;
 }
 
-export default async function uploadFolder({ folder, uploadPath, ak, sk, bucket, zone, verbose }: Params) {
+async function uploadFolder({ folder, uploadPath, ak, sk, bucket, zone }: Params): Promise<void> {
   const files = glob.sync(path.join(folder, '**/*'))
     .filter((filePath) => fs.statSync(filePath).isFile())
     .map((filePath) => {
@@ -25,6 +24,8 @@ export default async function uploadFolder({ folder, uploadPath, ak, sk, bucket,
     });
 
   for (const { filePath, uploadPath } of files) {
-    await uploadOne({ filePath, uploadPath, ak, sk, bucket, zone, verbose });
+    await uploadOne({ filePath, uploadPath, ak, sk, bucket, zone });
   }
 }
+
+export default uploadFolder;

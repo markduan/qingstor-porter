@@ -4,6 +4,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 import handleCP from './handle-copy.js';
+import { setLogLever } from './logger.js';
 import { Options } from './type';
 
 const argv = yargs(hideBin(process.argv))
@@ -46,6 +47,8 @@ const options: Options = {
   verbose: !!argv.verbose,
   force: !!argv.force,
 };
+
+setLogLever(options.verbose ? 'verbose' : 'error');
 
 if (!options.ak || !options.sk) {
   throw new Error('ak and sk required');
