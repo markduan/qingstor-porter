@@ -1,6 +1,6 @@
 {
   "name": "qingstor-porter",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "private": false,
   "description": "utils for uploading files to qingstor",
   "license": "Apache-2.0",
