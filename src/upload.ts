@@ -1,26 +1,22 @@
 import undici from 'undici';
 import fs from 'fs';
-import { Duplex, pipeline } from 'stream';
+import { pipeline } from 'stream/promises';
 import { lookup } from 'mime-types';
 import { createGzip } from 'zlib';
 
 import { Options } from './type';
 import getAuthorization from './auth';
 import logger from './logger';
+import isFileExist from './is-file-exist';
 
 type RunParams = {
   file: string;
   to: string;
-  ak: string;
-  sk: string;
   bucket: string;
   zone: string;
-  force: boolean;
-  // resolve: () => void;
-  // reject: (err: Error) => void;
 }
 
-async function run({ file, to, ak, sk, bucket, zone }: RunParams): Promise<Duplex> {
+async function run({ file, to, bucket, zone }: RunParams, { ak, sk }: Options): Promise<void> {
   const date = new Date().toUTCString();
   const contentType = lookup(file) || 'application/oct-stream';
 
@@ -30,7 +26,7 @@ async function run({ file, to, ak, sk, bucket, zone }: RunParams): Promise<Duple
   logger.log(`uploading ${file.slice(pwd.length)}`);
   logger.log(`to ${hostname}${to}`);
 
-  return pipeline(
+  await pipeline(
     fs.createReadStream(file),
     createGzip(),
     // todo support config qingstor endpoint
@@ -71,10 +67,14 @@ type uploadOneParams = {
   // force: boolean;
 }
 
-function uploadOne({ file, to, bucket, zone }: uploadOneParams, { ak, sk, force }: Options): Promise<void> {
-  return new Promise(() => {
-    return run({ file, to, bucket, zone, ak, sk, force });
-  });
+async function uploadOne({ file, to, bucket, zone }: uploadOneParams, options: Options): Promise<void> {
+  const has = await isFileExist({ to, bucket, zone, ak: options.ak, sk: options.sk });
+  if (has && !options.force) {
+    logger.error('file already exist, if you still want to upload, please -f');
+    return;
+  }
+
+  return run({ file, to, bucket, zone }, options);
 }
 
 export default uploadOne;

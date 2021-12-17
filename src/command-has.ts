@@ -7,7 +7,7 @@ function commandHas(target: string, options: Options): void {
   isFileExist({
     ak: options.ak,
     sk: options.sk,
-    uploadPath: filePath,
+    to: filePath,
     bucket,
     zone,
   }).then((isExist: boolean) => {

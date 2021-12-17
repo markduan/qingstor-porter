@@ -2,21 +2,21 @@ import { request } from 'undici';
 import getAuthorization from './auth';
 
 type Params = {
-  uploadPath: string;
+  to: string;
   ak: string;
   sk: string;
   bucket: string;
   zone: string;
 }
 
-async function isFileExist({ uploadPath, ak, sk, bucket, zone }: Params): Promise<boolean> {
+async function isFileExist({ to, ak, sk, bucket, zone }: Params): Promise<boolean> {
   const date = new Date().toUTCString();
-  const auth = getAuthorization({ to: uploadPath, ak, sk, bucket, method: 'HEAD', date, contentType: '' });
+  const auth = getAuthorization({ to, ak, sk, bucket, method: 'HEAD', date, contentType: '' });
   const hostname = `${bucket}.${zone}.qingstor.com`;
   const urlObj = {
     protocol: 'https:',
     hostname: hostname,
-    pathname: uploadPath,
+    pathname: to,
   };
 
   const { statusCode } = await request(urlObj, {
