@@ -6,6 +6,7 @@ import { hideBin } from 'yargs/helpers';
 import handleCP from './handle-copy.js';
 import { setLogLever } from './logger.js';
 import { Options } from './type';
+import commandHas from './command-has';
 
 const argv = yargs(hideBin(process.argv))
   .options({
@@ -31,14 +32,12 @@ const argv = yargs(hideBin(process.argv))
       global: true,
     },
   })
-  .command(
-    'cp',
-    'copy file or folder to QingStor',
-    // {
-    //   source: { describe: 'file or folder path', type: 'string' },
-    //   destination: { describe: 'e.g. pek3b:bucket:[prefix]', type: 'string' },
-    // },
-  )
+  // {
+  //   source: { describe: 'file or folder path', type: 'string' },
+  //   destination: { describe: 'e.g. pek3b:bucket:[prefix]', type: 'string' },
+  // },
+  .command('cp', 'copy file or folder to QingStor')
+  .command('has', 'check if file exist')
   .help('h').parseSync();
 
 const options: Options = {
@@ -62,9 +61,18 @@ if (argv._[0] === 'cp') {
   const sources = argv._.slice(1, -1);
   const destination = argv._[argv._.length - 1];
 
+  // todo upload one by one
   Promise.all(
     sources.map((source) => {
       return handleCP(String(source), String(destination), options);
     }),
   );
+}
+
+if (argv._[0] === 'has') {
+  if (argv._.length < 2) {
+    throw new Error('file path required, eg: zone:bucket:/path/to/some/file');
+  }
+
+  commandHas(String(argv._[1]), options);
 }

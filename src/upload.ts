@@ -1,6 +1,6 @@
 import undici from 'undici';
 import fs from 'fs';
-import { pipeline } from 'stream';
+import { Duplex, pipeline } from 'stream';
 import { lookup } from 'mime-types';
 import { createGzip } from 'zlib';
 
@@ -14,21 +14,21 @@ type RunParams = {
   sk: string;
   bucket: string;
   zone: string;
-  resolve: () => void;
-  reject: (err: Error) => void;
+  // resolve: () => void;
+  // reject: (err: Error) => void;
 }
 
-function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject }: RunParams): void {
+async function run({ filePath, uploadPath, ak, sk, bucket, zone }: RunParams): Promise<Duplex> {
   const date = new Date().toUTCString();
   const contentType = lookup(filePath) || 'application/oct-stream';
 
-  const auth = getAuthorization({ uploadPath, date, contentType, ak, sk, bucket });
+  const auth = getAuthorization({ uploadPath, date, contentType, ak, sk, bucket, method: 'PUT' });
   const pwd = process.cwd();
   const hostname = `${bucket}.${zone}.qingstor.com`;
   logger.log(`uploading ${filePath.slice(pwd.length)}`);
   logger.log(`to ${hostname}${uploadPath}`);
 
-  pipeline(
+  return pipeline(
     fs.createReadStream(filePath),
     createGzip(),
     // todo support config qingstor endpoint
@@ -56,14 +56,6 @@ function run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject }: Ru
         return body;
       },
     ),
-    (err) => {
-      if (err) {
-        logger.error('err:', err);
-        reject(err);
-      }
-
-      resolve();
-    },
   );
 }
 
@@ -74,11 +66,12 @@ type uploadOneParams = {
   sk: string;
   bucket: string;
   zone: string;
+  force: boolean;
 }
 
 function uploadOne({ filePath, uploadPath, ak, sk, bucket, zone }: uploadOneParams): Promise<void> {
-  return new Promise((resolve, reject) => {
-    run({ filePath, uploadPath, ak, sk, bucket, zone, resolve, reject });
+  return new Promise(() => {
+    return run({ filePath, uploadPath, ak, sk, bucket, zone });
   });
 }
 

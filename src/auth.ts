@@ -2,6 +2,7 @@ import path from 'path';
 import { createHmac } from 'crypto';
 
 type Params = {
+  method: 'HEAD' | 'PUT';
   uploadPath: string;
   date: string;
   contentType: string;
@@ -10,9 +11,9 @@ type Params = {
   bucket: string;
 }
 
-export default function getAuthorization({ uploadPath, date, contentType, ak, sk, bucket }: Params): string {
+export default function getAuthorization({ method, uploadPath, date, contentType, ak, sk, bucket }: Params): string {
   const stringToSign = [
-    'PUT',
+    method,
     '',
     contentType,
     date,

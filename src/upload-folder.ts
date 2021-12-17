@@ -24,7 +24,7 @@ async function uploadFolder({ folder, uploadPath, ak, sk, bucket, zone }: Params
     });
 
   for (const { filePath, uploadPath } of files) {
-    await uploadOne({ filePath, uploadPath, ak, sk, bucket, zone });
+    await uploadOne({ filePath, uploadPath, ak, sk, bucket, zone, force: false });
   }
 }
 
