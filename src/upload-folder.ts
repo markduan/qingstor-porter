@@ -3,27 +3,25 @@ import path from 'path';
 import fs from 'fs';
 
 import { Options } from './type';
-import uploadOne from './upload';
+import uploadFile from './upload-file';
+import logger from './logger';
 
 type Params = {
   folder: string;
-  to: string;
+  prefix: string;
   bucket: string;
   zone: string;
 }
 
-async function uploadFolder({ folder, to, bucket, zone }: Params, options: Options): Promise<void> {
+async function uploadFolder({ folder, prefix, bucket, zone }: Params, options: Options): Promise<void> {
   const files = glob.sync(path.join(folder, '**/*'))
-    .filter((filePath) => fs.statSync(filePath).isFile())
-    .map((filePath) => {
-      return {
-        filePath,
-        uploadPath: path.join(to, filePath.slice(folder.length)),
-      };
-    });
+    .filter((file) => fs.statSync(file).isFile());
 
-  for (const { filePath, uploadPath } of files) {
-    await uploadOne({ file: filePath, to: uploadPath, bucket, zone }, options);
+  logger.info('find %d files to be upload', files.length);
+
+  for (const file of files) {
+    const uploadPath = path.join(prefix, file.slice(folder.length));
+    await uploadFile({ file, to: uploadPath, bucket, zone }, options);
   }
 }
 

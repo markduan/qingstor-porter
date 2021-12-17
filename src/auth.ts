@@ -17,8 +17,6 @@ export default function getAuthorization({ method, to, date, contentType, ak, sk
     '',
     contentType,
     date,
-    // ofapkg-demo
-    // gd2
     encodeURI(path.join(`/${bucket}`, to)),
   ].join('\n');
   const hmac = createHmac('sha256', sk);

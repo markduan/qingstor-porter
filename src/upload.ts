@@ -7,24 +7,23 @@ import { createGzip } from 'zlib';
 import { Options } from './type';
 import getAuthorization from './auth';
 import logger from './logger';
-import isFileExist from './is-file-exist';
 
-type RunParams = {
+type params = {
   file: string;
   to: string;
   bucket: string;
   zone: string;
 }
 
-async function run({ file, to, bucket, zone }: RunParams, { ak, sk }: Options): Promise<void> {
+async function upload({ file, to, bucket, zone }: params, { ak, sk }: Options): Promise<void> {
   const date = new Date().toUTCString();
   const contentType = lookup(file) || 'application/oct-stream';
 
   const auth = getAuthorization({ to, date, contentType, ak, sk, bucket, method: 'PUT' });
   const pwd = process.cwd();
   const hostname = `${bucket}.${zone}.qingstor.com`;
-  logger.debug(`uploading ${file.slice(pwd.length)}`);
-  logger.debug(`to ${hostname}${to}`);
+
+  logger.debug(`uploading ${file.slice(pwd.length)}`, `to ${hostname}${to}`);
 
   await pipeline(
     fs.createReadStream(file),
@@ -57,24 +56,4 @@ async function run({ file, to, bucket, zone }: RunParams, { ak, sk }: Options): 
   );
 }
 
-type uploadOneParams = {
-  file: string;
-  to: string;
-  bucket: string;
-  zone: string;
-  // ak: string;
-  // sk: string;
-  // force: boolean;
-}
-
-async function uploadOne({ file, to, bucket, zone }: uploadOneParams, options: Options): Promise<void> {
-  const has = await isFileExist({ to, bucket, zone, ak: options.ak, sk: options.sk });
-  if (has && !options.force) {
-    logger.warn('file already exist, if you still want to upload, please -f');
-    return;
-  }
-
-  return run({ file, to, bucket, zone }, options);
-}
-
-export default uploadOne;
+export default upload;

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import uploadFolder from './upload-folder.js';
-import uploadOne from './upload';
+import uploadFile from './upload-file';
 import { Options } from './type';
 
 function commandCP(source: string, destination: string, options: Options): Promise<void> {
@@ -23,10 +23,10 @@ function commandCP(source: string, destination: string, options: Options): Promi
   const to = path.join('/', prefix, basename);
 
   if (stat.isDirectory()) {
-    return uploadFolder({ folder: absPath, to, bucket, zone }, options);
+    return uploadFolder({ folder: absPath, prefix: to, bucket, zone }, options);
   }
 
-  return uploadOne({ file: absPath, to, bucket, zone }, options);
+  return uploadFile({ file: absPath, to, bucket, zone }, options);
 }
 
 export default commandCP;
