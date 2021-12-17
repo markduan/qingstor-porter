@@ -18,7 +18,7 @@ export default new Proxy(console, {
       return Reflect.get(target, propKey, receiver);
     }
 
-    if (propKey === 'warn' || propKey === 'log' || propKey === 'debug') {
+    if (propKey === 'debug') {
       return noop;
     }
 

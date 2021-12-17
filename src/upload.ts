@@ -23,8 +23,8 @@ async function run({ file, to, bucket, zone }: RunParams, { ak, sk }: Options): 
   const auth = getAuthorization({ to, date, contentType, ak, sk, bucket, method: 'PUT' });
   const pwd = process.cwd();
   const hostname = `${bucket}.${zone}.qingstor.com`;
-  logger.log(`uploading ${file.slice(pwd.length)}`);
-  logger.log(`to ${hostname}${to}`);
+  logger.debug(`uploading ${file.slice(pwd.length)}`);
+  logger.debug(`to ${hostname}${to}`);
 
   await pipeline(
     fs.createReadStream(file),
@@ -70,7 +70,7 @@ type uploadOneParams = {
 async function uploadOne({ file, to, bucket, zone }: uploadOneParams, options: Options): Promise<void> {
   const has = await isFileExist({ to, bucket, zone, ak: options.ak, sk: options.sk });
   if (has && !options.force) {
-    logger.error('file already exist, if you still want to upload, please -f');
+    logger.warn('file already exist, if you still want to upload, please -f');
     return;
   }
 
