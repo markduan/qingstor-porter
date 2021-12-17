@@ -11,7 +11,7 @@ type Params = {
 
 async function isFileExist({ uploadPath, ak, sk, bucket, zone }: Params): Promise<boolean> {
   const date = new Date().toUTCString();
-  const auth = getAuthorization({ uploadPath, ak, sk, bucket, method: 'HEAD', date, contentType: '' });
+  const auth = getAuthorization({ to: uploadPath, ak, sk, bucket, method: 'HEAD', date, contentType: '' });
   const hostname = `${bucket}.${zone}.qingstor.com`;
   const urlObj = {
     protocol: 'https:',

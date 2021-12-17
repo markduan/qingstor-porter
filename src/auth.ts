@@ -3,7 +3,7 @@ import { createHmac } from 'crypto';
 
 type Params = {
   method: 'HEAD' | 'PUT';
-  uploadPath: string;
+  to: string;
   date: string;
   contentType: string;
   ak: string;
@@ -11,7 +11,7 @@ type Params = {
   bucket: string;
 }
 
-export default function getAuthorization({ method, uploadPath, date, contentType, ak, sk, bucket }: Params): string {
+export default function getAuthorization({ method, to, date, contentType, ak, sk, bucket }: Params): string {
   const stringToSign = [
     method,
     '',
@@ -19,7 +19,7 @@ export default function getAuthorization({ method, uploadPath, date, contentType
     date,
     // ofapkg-demo
     // gd2
-    encodeURI(path.join(`/${bucket}`, uploadPath)),
+    encodeURI(path.join(`/${bucket}`, to)),
   ].join('\n');
   const hmac = createHmac('sha256', sk);
   const signature = hmac.update(stringToSign).digest('base64');

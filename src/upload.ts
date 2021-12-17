@@ -4,39 +4,41 @@ import { Duplex, pipeline } from 'stream';
 import { lookup } from 'mime-types';
 import { createGzip } from 'zlib';
 
+import { Options } from './type';
 import getAuthorization from './auth';
 import logger from './logger';
 
 type RunParams = {
-  filePath: string;
-  uploadPath: string;
+  file: string;
+  to: string;
   ak: string;
   sk: string;
   bucket: string;
   zone: string;
+  force: boolean;
   // resolve: () => void;
   // reject: (err: Error) => void;
 }
 
-async function run({ filePath, uploadPath, ak, sk, bucket, zone }: RunParams): Promise<Duplex> {
+async function run({ file, to, ak, sk, bucket, zone }: RunParams): Promise<Duplex> {
   const date = new Date().toUTCString();
-  const contentType = lookup(filePath) || 'application/oct-stream';
+  const contentType = lookup(file) || 'application/oct-stream';
 
-  const auth = getAuthorization({ uploadPath, date, contentType, ak, sk, bucket, method: 'PUT' });
+  const auth = getAuthorization({ to, date, contentType, ak, sk, bucket, method: 'PUT' });
   const pwd = process.cwd();
   const hostname = `${bucket}.${zone}.qingstor.com`;
-  logger.log(`uploading ${filePath.slice(pwd.length)}`);
-  logger.log(`to ${hostname}${uploadPath}`);
+  logger.log(`uploading ${file.slice(pwd.length)}`);
+  logger.log(`to ${hostname}${to}`);
 
   return pipeline(
-    fs.createReadStream(filePath),
+    fs.createReadStream(file),
     createGzip(),
     // todo support config qingstor endpoint
     undici.pipeline(
       {
         protocol: 'https:',
         hostname: hostname,
-        pathname: uploadPath,
+        pathname: to,
       },
       {
         method: 'PUT',
@@ -60,18 +62,18 @@ async function run({ filePath, uploadPath, ak, sk, bucket, zone }: RunParams): P
 }
 
 type uploadOneParams = {
-  filePath: string;
-  uploadPath: string;
-  ak: string;
-  sk: string;
+  file: string;
+  to: string;
   bucket: string;
   zone: string;
-  force: boolean;
+  // ak: string;
+  // sk: string;
+  // force: boolean;
 }
 
-function uploadOne({ filePath, uploadPath, ak, sk, bucket, zone }: uploadOneParams): Promise<void> {
+function uploadOne({ file, to, bucket, zone }: uploadOneParams, { ak, sk, force }: Options): Promise<void> {
   return new Promise(() => {
-    return run({ filePath, uploadPath, ak, sk, bucket, zone });
+    return run({ file, to, bucket, zone, ak, sk, force });
   });
 }
 

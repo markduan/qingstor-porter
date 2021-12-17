@@ -3,7 +3,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import handleCP from './handle-copy.js';
+import commandCP from './command-cp.js';
 import { setLogLever } from './logger.js';
 import { Options } from './type';
 import commandHas from './command-has';
@@ -64,7 +64,7 @@ if (argv._[0] === 'cp') {
   // todo upload one by one
   Promise.all(
     sources.map((source) => {
-      return handleCP(String(source), String(destination), options);
+      return commandCP(String(source), String(destination), options);
     }),
   );
 }

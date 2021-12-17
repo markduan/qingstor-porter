@@ -5,7 +5,7 @@ import uploadFolder from './upload-folder.js';
 import uploadOne from './upload';
 import { Options } from './type';
 
-function handleCP(source: string, destination: string, { ak, sk, force }: Options): Promise<void> {
+function commandCP(source: string, destination: string, options: Options): Promise<void> {
   // remove the last slash
   const _trimSource = source.replace(/\/$/, '');
   let absPath = _trimSource;
@@ -20,13 +20,13 @@ function handleCP(source: string, destination: string, { ak, sk, force }: Option
 
   const stat = fs.statSync(absPath);
   const basename = path.basename(_trimSource);
-  const uploadPath = path.join('/', prefix, basename);
+  const to = path.join('/', prefix, basename);
 
   if (stat.isDirectory()) {
-    return uploadFolder({ folder: absPath, uploadPath, ak, sk, bucket, zone });
+    return uploadFolder({ folder: absPath, to, bucket, zone }, options);
   }
 
-  return uploadOne({ filePath: absPath, uploadPath, ak, sk, bucket, zone, force });
+  return uploadOne({ file: absPath, to, bucket, zone }, options);
 }
 
-export default handleCP;
+export default commandCP;

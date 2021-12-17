@@ -2,29 +2,28 @@ import glob from 'glob';
 import path from 'path';
 import fs from 'fs';
 
+import { Options } from './type';
 import uploadOne from './upload';
 
 type Params = {
   folder: string;
-  uploadPath: string;
-  ak: string;
-  sk: string;
+  to: string;
   bucket: string;
   zone: string;
 }
 
-async function uploadFolder({ folder, uploadPath, ak, sk, bucket, zone }: Params): Promise<void> {
+async function uploadFolder({ folder, to, bucket, zone }: Params, options: Options): Promise<void> {
   const files = glob.sync(path.join(folder, '**/*'))
     .filter((filePath) => fs.statSync(filePath).isFile())
     .map((filePath) => {
       return {
         filePath,
-        uploadPath: path.join(uploadPath, filePath.slice(folder.length)),
+        uploadPath: path.join(to, filePath.slice(folder.length)),
       };
     });
 
   for (const { filePath, uploadPath } of files) {
-    await uploadOne({ filePath, uploadPath, ak, sk, bucket, zone, force: false });
+    await uploadOne({ file: filePath, to: uploadPath, bucket, zone }, options);
   }
 }
 
