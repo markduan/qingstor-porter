@@ -38,7 +38,8 @@ const argv = yargs(hideBin(process.argv))
   // },
   .command('cp', 'copy file or folder to QingStor')
   .command('has', 'check if file exist')
-  .help('h').parseSync();
+  .help('h')
+  .parseSync();
 
 const options: Options = {
   ak: argv.ak || process.env.QINGSTOR_PORTER_CONFIG_AK || '',

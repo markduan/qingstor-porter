@@ -10,12 +10,14 @@ function commandHas(target: string, options: Options): void {
     to: filePath,
     bucket,
     zone,
-  }).then((isExist: boolean) => {
-    // eslint-disable-next-line no-console
-    console.log(isExist);
-  }).catch((err) => {
-    logger.error(err);
-  });
+  })
+    .then((isExist: boolean) => {
+      // eslint-disable-next-line no-console
+      console.log(isExist);
+    })
+    .catch((err) => {
+      logger.error(err);
+    });
 }
 
 export default commandHas;

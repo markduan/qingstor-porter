@@ -4,4 +4,4 @@ export type Options = {
   verbose: boolean;
   force: boolean;
   config?: string;
-}
+};

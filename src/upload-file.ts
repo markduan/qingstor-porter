@@ -1,4 +1,3 @@
-
 import { Options } from './type';
 import logger from './logger';
 import isFileExist from './is-file-exist';
@@ -9,7 +8,7 @@ type uploadOneParams = {
   to: string;
   bucket: string;
   zone: string;
-}
+};
 
 async function uploadFile({ file, to, bucket, zone }: uploadOneParams, options: Options): Promise<void> {
   const has = await isFileExist({ to, bucket, zone, ak: options.ak, sk: options.sk });

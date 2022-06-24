@@ -7,7 +7,7 @@ type Params = {
   sk: string;
   bucket: string;
   zone: string;
-}
+};
 
 async function isFileExist({ to, ak, sk, bucket, zone }: Params): Promise<boolean> {
   const date = new Date().toUTCString();

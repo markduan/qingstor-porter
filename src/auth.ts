@@ -9,16 +9,10 @@ type Params = {
   ak: string;
   sk: string;
   bucket: string;
-}
+};
 
 export default function getAuthorization({ method, to, date, contentType, ak, sk, bucket }: Params): string {
-  const stringToSign = [
-    method,
-    '',
-    contentType,
-    date,
-    encodeURI(path.join(`/${bucket}`, to)),
-  ].join('\n');
+  const stringToSign = [method, '', contentType, date, encodeURI(path.join(`/${bucket}`, to))].join('\n');
   const hmac = createHmac('sha256', sk);
   const signature = hmac.update(stringToSign).digest('base64');
 

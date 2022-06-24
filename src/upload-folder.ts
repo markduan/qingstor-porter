@@ -11,11 +11,10 @@ type Params = {
   prefix: string;
   bucket: string;
   zone: string;
-}
+};
 
 async function uploadFolder({ folder, prefix, bucket, zone }: Params, options: Options): Promise<void> {
-  const files = glob.sync(path.join(folder, '**/*'))
-    .filter((file) => fs.statSync(file).isFile());
+  const files = glob.sync(path.join(folder, '**/*')).filter((file) => fs.statSync(file).isFile());
 
   logger.info('find %d files to be upload', files.length);
 

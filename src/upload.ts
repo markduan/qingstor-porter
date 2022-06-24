@@ -13,7 +13,7 @@ type params = {
   to: string;
   bucket: string;
   zone: string;
-}
+};
 
 async function upload({ file, to, bucket, zone }: params, { ak, sk }: Options): Promise<void> {
   const date = new Date().toUTCString();

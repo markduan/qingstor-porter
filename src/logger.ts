@@ -13,7 +13,7 @@ export function setLogLever(level: 'verbose' | 'error'): void {
 }
 
 export default new Proxy(console, {
-  get: function(target, propKey, receiver): any {
+  get: function (target, propKey, receiver): any {
     if (verbose) {
       return Reflect.get(target, propKey, receiver);
     }
