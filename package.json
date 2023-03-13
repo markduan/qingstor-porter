@@ -16,6 +16,10 @@
     "undici": "^4.9.3",
     "yargs": "^17.2.1"
   },
+  "volta": {
+    "node": "16.15.0",
+    "yarn": "1.19.2"
+  },
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/mime-types": "^2.1.1",
