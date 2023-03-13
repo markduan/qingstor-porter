@@ -1,7 +1,6 @@
 {
   "name": "qingstor-porter",
   "version": "0.1.0",
-  "private": false,
   "description": "utils for uploading files to qingstor",
   "license": "Apache-2.0",
   "author": "Mark Duan <dgwhangzhou@gmail.com> (https://github.com/markduan)",
@@ -34,5 +33,6 @@
   },
   "engines": {
     "node": ">=16.13.0"
-  }
+  },
+  "packageManager": "yarn@1.19.2"
 }
